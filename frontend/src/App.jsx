@@ -7,6 +7,7 @@ import Signin from "./pages/Signin"
 import Dashboard from "./pages/Dashboard"
 import Project from "./pages/Project"
 import Header from "./components/Header"
+import Fooster from "./components/Footer"
 function App() {
   
 
@@ -21,6 +22,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard/>}/>
       <Route path="/project" element={<Project/>}/>
      </Routes>
+     <Fooster/>
     </>
   )
 }

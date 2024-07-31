@@ -1,8 +1,32 @@
-import { Button, Navbar, TextInput } from "flowbite-react";
+import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaMoon } from "react-icons/fa";
+import { FaMoon ,FaSun} from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { signOutsuccess} from "../redux/user/userslice"
+import { useDispatch } from "react-redux";
+import { toggletheme} from "../redux/theme/themeslice"
 const Header = () => {
+  const dispatch = useDispatch()
+  const {theme} = useSelector((state)=>state.theme)
+  console.log(dispatch(toggletheme()));
+  const { Currentuser} = useSelector((state)=>state.user)
+
+  const handlesignout = async()=>{
+    try {
+        const respone = await fetch("/api/user/signout",{
+          method:"POST",
+        })
+        const data = await respone.json()
+        if(!respone.ok){
+          console.log(data.message);
+        }else{
+           dispatch(signOutsuccess())
+        }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // const path = useLocation().pathname
   return (
     <>
@@ -28,12 +52,38 @@ const Header = () => {
           <AiOutlineSearch />
         </Button>
         <div className="flex gap-2 md:order-2">
-          <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
-            <FaMoon />
+          <Button className="w-12 h-10  sm:inline" color="gray" pill onClick={()=> dispatch(toggletheme())}>
+            {theme ==="light"? <FaSun/>:  <FaMoon />}
+          
           </Button>
-          <Link to={"/signup"}>
+          {Currentuser ? (
+            <Dropdown 
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar
+               alt="user"
+               img={Currentuser.profilepic}
+               rounded/>
+               
+            }>
+              <Dropdown.Header>
+                <span className="block text-sm">@{Currentuser.username}</span>
+                <span className="block text-sm font-medium truncate">{Currentuser.email}</span>
+              </Dropdown.Header>
+              <Link to={"/dashboard?tab==profile"}>
+                 <Dropdown.Item>Profile</Dropdown.Item>
+              </Link>
+              <Dropdown.Divider/>
+              <Dropdown.Item onClick={handlesignout}>Sign out</Dropdown.Item>
+            </Dropdown>
+          )
+          :(
+            <Link to={"/signup"}>
             <Button gradientDuoTone={"purpleToBlue"} outline>Signup</Button>
           </Link>
+          )}
+      
           <Navbar.Toggle />
         </div>
         <Navbar.Collapse>

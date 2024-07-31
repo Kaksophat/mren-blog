@@ -5,10 +5,12 @@ import cookie from "cookie-parser"
 dotenv.config()
 import userroute from "./routes/userroute.js"
 import authroute from './routes/authroute.js'
+import cors from "cors"
 
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 app.use(cookie())
 
 app.use("/api/user",userroute)
